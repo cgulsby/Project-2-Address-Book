@@ -10,22 +10,10 @@
 
 Status load_file(AddressBook *address_book)
 {
-	int ret;
+	address_book->fp = fopen(DEFAULT_FILE, "r+");		// If file exists, opens in read/write mode with the file pointer at the beginning of the file
 
-	/* 
-	 * Check for file existance
-	 */
-
-	if (ret == 0)
-	{
-		/* 
-		 * Do the neccessary step to open the file
-		 * Do error handling
-		 */ 
-	}
-	else
-	{
-		/* Create a file for adding entries */
+	if(address_book->fp == NULL) {
+		address_book->fp = fopen(DEFAULT_FILE, "w+");	// Creates new, empty file for reading/writing
 	}
 
 	return e_success;
