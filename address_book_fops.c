@@ -13,7 +13,7 @@ Status load_file(AddressBook *address_book)
 	address_book->fp = fopen(DEFAULT_FILE, "r+");		// If file exists, opens in read/write mode with the file pointer at the beginning of the file
 
 	if(address_book->fp == NULL) {
-		address_book->fp = fopen(DEFAULT_FILE, "w+");	// Creates new, empty file for reading/writing
+		address_book->fp = fopen(DEFAULT_FILE, "w+");	// Creates new, empty file for reading/writing if it didn't previously exist
 	}
 
 	return e_success;
