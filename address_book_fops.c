@@ -40,11 +40,12 @@ Status load_file(AddressBook *address_book)
 
 		int tempCount = 0;	// Counts the number of Contacts read in
 		ContactInfo *tempContactPtr = address_book->list;
+		fseek(tempContactPtr, 0, SEEK_SET);	// Set to beginning of list..?
+
 		while (fscanf(tempFP, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]", 
 		name, 
 		phoneNum1, phoneNum2, phoneNum3, phoneNum4, phoneNum5, 
 		email1, email2, email3, email4, email5) == 11) {
-			tempContactPtr += tempCount * (NAME_LEN + (5 * NUMBER_LEN) + (5 * EMAIL_ID_LEN));	// Pointer arithmetic...
 
 			// Add name
 			strcpy(tempContactPtr->name, name);
@@ -64,6 +65,8 @@ Status load_file(AddressBook *address_book)
 			tempCount++;
 
 			tempContactPtr->si_no = tempCount;
+
+			tempContactPtr += sizeof(ContactInfo);
     	}
 
 		address_book->count = tempCount;
@@ -95,7 +98,6 @@ Status save_file(AddressBook *address_book)
 	fseek(tempFP, 0, SEEK_SET);	// Set pointer to beginning of file
 	
 	for(int i = 0; i < address_book->count; i++) {
-		tempFP += i * (NAME_LEN + 5 * NUMBER_LEN + 5 * EMAIL_ID_LEN);	// Pointer arithmetic
 
 		// Should write as "name,phoneNum1,phoneNum2,phoneNum3,phoneNum4,phoneNum5,email1,email2,email3,email4,email5"
 		// Write name
@@ -106,6 +108,8 @@ Status save_file(AddressBook *address_book)
 		//Write email addresses
 		fprintf(tempFP, "%s%s,%s,%s,%s,%s\n", address_book->list->email_addresses[0], address_book->list->email_addresses[1],
 		address_book->list->email_addresses[2], address_book->list->email_addresses[3], address_book->list->email_addresses[4]);
+
+		tempFP += sizeof(ContactInfo);	// Increments pointer to next Contact
 	}
 
 	fclose(address_book->fp);
