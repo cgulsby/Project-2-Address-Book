@@ -76,18 +76,25 @@ Status load_file(AddressBook *address_book)
 	return e_success;
 }
 
+
+
+
+
 Status save_file(AddressBook *address_book)
 {
-	/*
-	 * Write contacts back to file.
-	 * Re write the complete file currently
-	 */ 
-	address_book->fp = fopen(DEFAULT_FILE, "w");
+    FILE *fp = fopen(DEFAULT_FILE, "w");
+    if (fp == NULL)
+        return e_fail;
 
-	if (address_book->fp == NULL)
-	{
-		return e_fail;
-	}
+    for (int i = 0; i < address_book->count; i++)
+    {
+        ContactInfo *c = &address_book->list[i];
+        fprintf(fp, "%d,%s,%s,%s\n",
+                c->si_no,
+                c->name,
+                c->phone_numbers,
+                c->email_addresses);
+    }
 
 	/* 
 	 * Add the logic to save the file
