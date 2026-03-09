@@ -91,6 +91,23 @@ Status save_file(AddressBook *address_book)
 	 * Make sure to do error handling
 	 */ 
 
+	FILE *tempFP = address_book->fp;
+	fseek(tempFP, 0, SEEK_SET);	// Set pointer to beginning of file
+	
+	for(int i = 0; i < address_book->count; i++) {
+		tempFP += i * (NAME_LEN + 5 * NUMBER_LEN + 5 * EMAIL_ID_LEN);	// Pointer arithmetic
+
+		// Should write as "name,phoneNum1,phoneNum2,phoneNum3,phoneNum4,phoneNum5,email1,email2,email3,email4,email5"
+		// Write name
+		fprintf(tempFP, "%s,", address_book->list->name[0]);
+		// Write phone numbers
+		fprintf(tempFP, "%s,%s,%s,%s,%s,", address_book->list->phone_numbers[0], address_book->list->phone_numbers[1],
+		address_book->list->phone_numbers[2], address_book->list->phone_numbers[3], address_book->list->phone_numbers[4]);
+		//Write email addresses
+		fprintf(tempFP, "%s%s,%s,%s,%s,%s\n", address_book->list->email_addresses[0], address_book->list->email_addresses[1],
+		address_book->list->email_addresses[2], address_book->list->email_addresses[3], address_book->list->email_addresses[4]);
+	}
+
 	fclose(address_book->fp);
 
 	return e_success;
