@@ -65,8 +65,8 @@ int get_option(int type, const char *msg)
   }
 
   return e_no_opt;
-}
 
+}
 Status save_prompt(AddressBook *address_book)
 {
 	char option;
@@ -79,7 +79,7 @@ Status save_prompt(AddressBook *address_book)
 
 		if (option == 'Y')
 		{
-a			save_file(address_book);
+			save_file(address_book);
 			printf("Exiting. Data saved in %s\n", DEFAULT_FILE);
 
 			break;
