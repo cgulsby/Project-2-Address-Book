@@ -12,7 +12,17 @@ int main() {
     AddressBook testAddressBook;
     Status test;
 
-    testAddressBook.fp = fopen("test_fops.csv", "r");
+    // Copy test_fops.csv to address_book.csv so load_file can find it
+    FILE *src = fopen("test_fops.csv", "r");
+    FILE *dst = fopen("address_book.csv", "w");
+    if (src && dst) {
+        int ch;
+        while ((ch = fgetc(src)) != EOF)
+            fputc(ch, dst);
+    }
+    if (src) fclose(src);
+    if (dst) fclose(dst);
+
 	testAddressBook.list = NULL;
 	testAddressBook.count = 0;
 
@@ -21,25 +31,25 @@ int main() {
 
     if(test == e_success) {
         for(int i = 0; i < testAddressBook.count; i++){
-            printf("Name: %s\n", testAddressBook.list->name[0]);    // Print name
+            printf("Name: %s\n", testAddressBook.list[i].name[0]);    // Print name
 
             // Print phone numbers
             printf("Phone Numbers: ");
             for(int j = 0; j < PHONE_NUMBER_COUNT; j++)
-                printf("%s ", testAddressBook.list->phone_numbers[j]);
+                printf("%s ", testAddressBook.list[i].phone_numbers[j]);
             printf("\n");
 
             // Print email address
             printf("Emails: ");
             for(int k = 0; k < EMAIL_ID_COUNT; k++)
-                printf("%s ", testAddressBook.list->email_addresses[k]);
+                printf("%s ", testAddressBook.list[i].email_addresses[k]);
             printf("\n");
-
-            testAddressBook.list += sizeof(ContactInfo);
         }
     }
 
     if(test == e_fail) { printf("Fail :("); }
+
+    free(testAddressBook.list);
 
     return 0;
 }
