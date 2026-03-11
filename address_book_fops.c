@@ -23,9 +23,21 @@ Status load_file(AddressBook *address_book)
 		return e_success;
 	}
 
+	// Check if the file is empty (exists but has no data)
+	fseek(address_book->fp, 0, SEEK_END);
+	if(ftell(address_book->fp) == 0) {
+		address_book->count = 0;
+		address_book->list = NULL;
+		fclose(address_book->fp);
+		address_book->fp = NULL;
+
+		return e_success;
+	}
+	rewind(address_book->fp);
+
 	// Data has previously existed, must be loaded into current address book
 	// Assuming first line of the csv file will have the total number of contacts
-	// Assuming csv format = name,phone1,phone2,phone3,phone4,phone5,email1,email2,email3,email4,email5
+	// Assuming csv format = si_no,name,phone1,phone2,phone3,phone4,phone5,email1,email2,email3,email4,email5
 
 	int contactCount;
 	if(fscanf(address_book->fp, "%d\n", &contactCount) != 1) {	// Read number of contacts in the file
@@ -37,6 +49,7 @@ Status load_file(AddressBook *address_book)
 	address_book->count = contactCount;
 
 	// Variables to hold data that's read in from the file
+	int si_no;
 	char name[NAME_LEN];
 	char phoneNum1[NUMBER_LEN];
 	char phoneNum2[NUMBER_LEN];
@@ -61,10 +74,10 @@ Status load_file(AddressBook *address_book)
 	ContactInfo *tempContactPtr = address_book->list;	// contactCount should've been read already, should be pointing at first ContactInfo
 
 	for(int i = 0; i < contactCount; i++) {
-		if(fscanf(address_book->fp, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n",
-		name,
+		if(fscanf(address_book->fp, "%d,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n",
+		&si_no, name,
 		phoneNum1, phoneNum2, phoneNum3, phoneNum4, phoneNum5,
-		email1, email2, email3, email4, email5) != 11) {
+		email1, email2, email3, email4, email5) != 12) {
 			fclose(address_book->fp);
 			address_book->fp = NULL;
 			printf("Could not read values\n");
@@ -87,7 +100,7 @@ Status load_file(AddressBook *address_book)
 		strcpy(tempContactPtr->email_addresses[3], strcmp(email4, " ") == 0 ? "" : email4);
 		strcpy(tempContactPtr->email_addresses[4], strcmp(email5, " ") == 0 ? "" : email5);
 
-		tempContactPtr->si_no = i + 1;
+		tempContactPtr->si_no = si_no;
 
 		tempContactPtr++;
 	}
@@ -101,10 +114,6 @@ Status load_file(AddressBook *address_book)
 // Keana and Chris
 Status save_file(AddressBook *address_book)
 {
-	/*
-	 * Write contacts back to file.
-	 * Re write the complete file currently
-	 */ 
 	address_book->fp = fopen(DEFAULT_FILE, "w");
 
 	if (address_book->fp == NULL)
@@ -112,29 +121,24 @@ Status save_file(AddressBook *address_book)
 		return e_fail;
 	}
 
-	/* 
-	 * Add the logic to save the file
-	 * Make sure to do error handling
-	 */ 
-
-	fprintf(fp, "%d\n", address_book->count);	// Prints count of contacts
+	fprintf(address_book->fp, "%d\n", address_book->count);	// Prints count of contacts
 
 	for(int i = 0; i < address_book->count; i++) {
 		ContactInfo *c = &address_book->list[i];
 
 		// Write empty fields as " " so fscanf can parse them back
-		// Should write as "name,phoneNum1,phoneNum2,phoneNum3,phoneNum4,phoneNum5,email1,email2,email3,email4,email5"
-		// Write name
-		fprintf(fp, "%s,", strlen(c->name[0]) > 0 ? c->name[0] : " ");
+		// Should write as "si_no,name,phoneNum1,phoneNum2,phoneNum3,phoneNum4,phoneNum5,email1,email2,email3,email4,email5"
+		// Write si_no and name
+		fprintf(address_book->fp, "%d,%s,", c->si_no, strlen(c->name[0]) > 0 ? c->name[0] : " ");
 		// Write phone numbers
-		fprintf(fp, "%s,%s,%s,%s,%s,",
+		fprintf(address_book->fp, "%s,%s,%s,%s,%s,",
 		strlen(c->phone_numbers[0]) > 0 ? c->phone_numbers[0] : " ",
 		strlen(c->phone_numbers[1]) > 0 ? c->phone_numbers[1] : " ",
 		strlen(c->phone_numbers[2]) > 0 ? c->phone_numbers[2] : " ",
 		strlen(c->phone_numbers[3]) > 0 ? c->phone_numbers[3] : " ",
 		strlen(c->phone_numbers[4]) > 0 ? c->phone_numbers[4] : " ");
 		//Write email addresses
-		fprintf(fp, "%s,%s,%s,%s,%s\n",
+		fprintf(address_book->fp, "%s,%s,%s,%s,%s\n",
 		strlen(c->email_addresses[0]) > 0 ? c->email_addresses[0] : " ",
 		strlen(c->email_addresses[1]) > 0 ? c->email_addresses[1] : " ",
 		strlen(c->email_addresses[2]) > 0 ? c->email_addresses[2] : " ",
@@ -142,7 +146,8 @@ Status save_file(AddressBook *address_book)
 		strlen(c->email_addresses[4]) > 0 ? c->email_addresses[4] : " ");
 	}
 
-	fclose(fp);
+	fclose(address_book->fp);
+	address_book->fp = NULL;
 
 	return e_success;
 }

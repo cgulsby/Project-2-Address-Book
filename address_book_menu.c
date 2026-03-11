@@ -350,6 +350,13 @@ Status search(const char *str, AddressBook *address_book, int loop_count, int fi
 			}
 		}
 
+		else if (field == 3){ //Search by si_no (session ID)
+			int search_id = atoi(str);
+			if (address_book->list[i].si_no == search_id){
+				match = 1;
+			}
+		}
+
 		if (match == 1){
 			printf("Contact Found:\n");
 			printf("S.No : %d\n", address_book->list[i].si_no); // Prints it serial number
