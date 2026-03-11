@@ -27,27 +27,27 @@ int main() {
 
     if(test == e_success) {
         for(int i = 0; i < testAddressBook.count; i++){
-            printf("Name: %s\n", testAddressBook.list->name[0]);    // Print name
+            printf("Name: %s\n", testAddressBook.list[i].name[0]);    // Print name
 
             // Print phone numbers
             printf("Phone Numbers: ");
             for(int j = 0; j < PHONE_NUMBER_COUNT; j++)
-                printf("%s ", testAddressBook.list->phone_numbers[j]);
+                printf("%s ", testAddressBook.list[i].phone_numbers[j]);
             printf("\n");
 
             // Print email address
             printf("Emails: ");
             for(int k = 0; k < EMAIL_ID_COUNT; k++)
-                printf("%s ", testAddressBook.list->email_addresses[k]);
+                printf("%s ", testAddressBook.list[i].email_addresses[k]);
             printf("\n");
-
-            testAddressBook.list++;
         }
     }
 
     if(test == e_fail) { 
         printf("Failed to load file :("); 
     }
+
+    free(testAddressBook.list);
 
     return 0;
 }
