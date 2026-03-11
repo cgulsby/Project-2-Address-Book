@@ -12,11 +12,17 @@ int main() {
     AddressBook testAddressBook;
     Status test;
 
-    testAddressBook.fp = fopen("test_fops.csv", "r");
+    testAddressBook.fp = fopen("address_book.csv", "r");
 	testAddressBook.list = NULL;
 	testAddressBook.count = 0;
 
     /* Load the file from .csv file if any */
+    if(testAddressBook.fp == NULL) {
+        printf("Unable to open file");
+        return 0;
+    }
+
+    // Test load file
 	test = load_file(&testAddressBook);
 
     if(test == e_success) {
@@ -35,11 +41,13 @@ int main() {
                 printf("%s ", testAddressBook.list->email_addresses[k]);
             printf("\n");
 
-            testAddressBook.list += sizeof(ContactInfo);
+            testAddressBook.list++;
         }
     }
 
-    if(test == e_fail) { printf("Fail :("); }
+    if(test == e_fail) { 
+        printf("Failed to load file :("); 
+    }
 
     return 0;
 }

@@ -8,6 +8,7 @@
 
 #include "address_book.h"
 
+// Keana & Chris
 Status load_file(AddressBook *address_book)
 {
 	address_book->fp = fopen(DEFAULT_FILE, "r+");		// If file exists, opens in read/write mode with the file pointer at the beginning of the file
@@ -30,6 +31,7 @@ Status load_file(AddressBook *address_book)
 	if(fscanf(address_book->fp, "%d\n", &contactCount) != 1) {	// Read number of contacts in the file
 		fclose(address_book->fp);
 		address_book->fp = NULL;
+		printf("Could not read contactCount\n");
 		return e_fail;
 	}
 	address_book->count = contactCount;
@@ -65,6 +67,7 @@ Status load_file(AddressBook *address_book)
 		email1, email2, email3, email4, email5) != 11) {
 			fclose(address_book->fp);
 			address_book->fp = NULL;
+			printf("Could not read values\n");
 			return e_fail;
 		}
 
@@ -95,17 +98,15 @@ Status load_file(AddressBook *address_book)
 	return e_success;
 }
 
-
-
-
-
+// Keana & Chris
 Status save_file(AddressBook *address_book)
 {
     FILE *fp = fopen(DEFAULT_FILE, "w");
     if (fp == NULL)
         return e_fail;
 
-	fprintf(fp, "%d\n", address_book->count);
+	fprintf(fp, "%d\n", address_book->count);	// Prints count of contacts
+
 	for(int i = 0; i < address_book->count; i++) {
 		ContactInfo *c = &address_book->list[i];
 

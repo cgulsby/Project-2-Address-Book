@@ -67,6 +67,7 @@ int get_option(int type, const char *msg)
   return e_no_opt;
 
 }
+
 Status save_prompt(AddressBook *address_book)
 {
 	char option;
@@ -171,7 +172,11 @@ void menu_header(const char *str)
 {
 	fflush(stdout);
 
-	system("clear");
+	int clearRet = system("clear");
+
+  if (clearRet != 0) {
+    system("cls");
+  }
 
 	printf("#######  Address Book  #######\n");
 	if (str != NULL)
@@ -281,7 +286,7 @@ Status add_contacts(AddressBook *address_book)
 		return e_fail;
 	}
 
-	for (int i = 0; i <PHONE_NUMBER_COUNT && check == 0; i++){
+	for (int i = 0; i < PHONE_NUMBER_COUNT && check == 0; i++){
 		printf("Enter Phone %d (press enter to skip): ",i + 1);//Adds phone numbers to one contact
 		fgets(new_contact->phone_numbers[i],NUMBER_LEN,stdin);
 		new_contact->phone_numbers[i][strcspn(new_contact->phone_numbers[i], "\n")] = '\0';
@@ -537,4 +542,4 @@ Status delete_contact(AddressBook *address_book)
     printf("Deleted.\n");
     get_option(NONE, "Press Enter to continue...");
     return e_success;
-}
+}
