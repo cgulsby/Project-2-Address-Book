@@ -98,12 +98,24 @@ Status load_file(AddressBook *address_book)
 	return e_success;
 }
 
-// Keana & Chris
+// Keana and Chris
 Status save_file(AddressBook *address_book)
 {
-    FILE *fp = fopen(DEFAULT_FILE, "w");
-    if (fp == NULL)
-        return e_fail;
+	/*
+	 * Write contacts back to file.
+	 * Re write the complete file currently
+	 */ 
+	address_book->fp = fopen(DEFAULT_FILE, "w");
+
+	if (address_book->fp == NULL)
+	{
+		return e_fail;
+	}
+
+	/* 
+	 * Add the logic to save the file
+	 * Make sure to do error handling
+	 */ 
 
 	fprintf(fp, "%d\n", address_book->count);	// Prints count of contacts
 
