@@ -1,17 +1,38 @@
-all:
-	gcc address_book_fops.c address_book_menu.c main.c -o addressbook -I.
+CC = gcc
+CFLAGS = -Iinclude -Ilib -DPROJECT_ROOT=\"$(shell pwd)\"
+SRCDIR = src
+LIBDIR = lib
+OBJDIR = obj
+BINDIR = bin
 
-debug1:
-	gcc address_book_fops.c address_book_menu.c unity.c test_address_book_Ish.c -o test1 -I.
+SRCS = $(SRCDIR)/address_book_fops.c $(SRCDIR)/address_book_menu.c $(SRCDIR)/main.c
+OBJS = $(OBJDIR)/address_book_fops.o $(OBJDIR)/address_book_menu.o $(OBJDIR)/main.o
 
-debug2:
-	gcc address_book_fops.c address_book_menu.c unity.c test_address_book_get_option_Chris.c -o test2 -I.
+all: $(BINDIR)/addressbook
 
-debug3:
-	gcc address_book_fops.c address_book_menu.c unity.c test_address_book_list_contacts_Chris.c -o test3 -I.
+$(BINDIR)/addressbook: $(OBJS)
+	$(CC) $(OBJS) -o $@
 
-debug4:
-	gcc address_book_fops.c address_book_menu.c unity.c test_address_book_search_contact_Ricardo.c -o test4 -I.
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-debug6:
-	gcc address_book_fops.c address_book_menu.c unity.c test_address_book_Viknesh.c -o test6 -I.
+debug1: $(OBJDIR)/address_book_fops.o $(OBJDIR)/address_book_menu.o $(OBJDIR)/unity.o $(OBJDIR)/test_address_book_Ish.o
+	$(CC) $^ -o $(BINDIR)/test1
+
+debug2: $(OBJDIR)/address_book_fops.o $(OBJDIR)/address_book_menu.o $(OBJDIR)/unity.o $(OBJDIR)/test_address_book_get_option_Chris.o
+	$(CC) $^ -o $(BINDIR)/test2
+
+debug3: $(OBJDIR)/address_book_fops.o $(OBJDIR)/address_book_menu.o $(OBJDIR)/unity.o $(OBJDIR)/test_address_book_list_contacts_Chris.o
+	$(CC) $^ -o $(BINDIR)/test3
+
+debug4: $(OBJDIR)/address_book_fops.o $(OBJDIR)/address_book_menu.o $(OBJDIR)/unity.o $(OBJDIR)/test_address_book_search_contact_Ricardo.o
+	$(CC) $^ -o $(BINDIR)/test4
+
+debug6: $(OBJDIR)/address_book_fops.o $(OBJDIR)/address_book_menu.o $(OBJDIR)/unity.o $(OBJDIR)/test_address_book_Viknesh.o
+	$(CC) $^ -o $(BINDIR)/test6
+
+$(OBJDIR)/unity.o: $(LIBDIR)/unity.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJDIR)/*.o $(BINDIR)/*

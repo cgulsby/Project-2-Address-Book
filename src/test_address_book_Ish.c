@@ -14,11 +14,11 @@ static AddressBook book;
 
 // Redirect stdin to a test file
 static void feed_input(const char *text){
-    FILE *fp = fopen("test_input.txt", "w");
+    FILE *fp = fopen(PROJECT_ROOT "/test/test_input.txt", "w");
     fputs(text, fp);
     fclose(fp);
 
-    freopen("test_input.txt", "r", stdin);
+    freopen(PROJECT_ROOT "/test/test_input.txt", "r", stdin);
 }
 
 //Build one contact manually for search tests
